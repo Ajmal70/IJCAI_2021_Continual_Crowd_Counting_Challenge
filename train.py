@@ -28,7 +28,6 @@ def log_print(text, color=None, on_color=None, attrs=None):
         print(text)
 
 
-
 method = 'mcnn'
 dataset_name = 'shtechA'
 output_dir = './saved_models/'
