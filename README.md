@@ -1,5 +1,6 @@
 # IJCAI_2021_Continual_Crowd_Counting_Challenge
-Dataset and Baseline for Continual Crowd Counting Challenge @ CSSL 2021 Workshop (IJCAI 2021)
+
+## Baseline
 
 This repo helps the challengers to access dataset and baseline conveniently. The workshop/challenge website is located at:
 https://sites.google.com/view/sscl-workshop-ijcai-2021/
