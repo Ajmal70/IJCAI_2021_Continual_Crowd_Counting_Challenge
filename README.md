@@ -4,6 +4,7 @@ Dataset and Baseline for Continual Crowd Counting Challenge @ CSSL 2021 Workshop
 This repo helps the challengers to access dataset and baseline conveniently. The workshop/challenge website is located at:
 https://sites.google.com/view/sscl-workshop-ijcai-2021/
 
+The baseline is inspired from the unofficial implementation of CVPR 2016 paper "Single Image Crowd Counting via Multi Column Convolutional Neural Network" at https://github.com/svishwa/crowdcount-mcnn. However, the repo is updated with latest pytorch version and unsupervised training part.
 
 ## Dataset Description
 
