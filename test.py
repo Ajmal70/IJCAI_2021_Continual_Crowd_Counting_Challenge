@@ -7,7 +7,6 @@ from src import network
 from src.data_loader import ImageDataLoader
 from src import utils
 
-
 torch.backends.cudnn.enabled = True
 torch.backends.cudnn.benchmark = False
 vis = False
