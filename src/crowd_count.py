@@ -2,7 +2,6 @@ import torch.nn as nn
 from src import network
 from src.models import MCNN
 
-
 class CrowdCounter(nn.Module):
     def __init__(self):
         super(CrowdCounter, self).__init__()        
