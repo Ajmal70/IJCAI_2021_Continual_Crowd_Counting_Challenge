@@ -15,9 +15,9 @@ The dataset can be downloaded from link below:\
 https://drive.google.com/file/d/1phQi86FvLXBoOeh9jeZ_-MomUbcGW04K/view?usp=sharing
 
 The train and validation (without groundtruth) is arranged as follows:\
-- Every dataset folder (say fdst) consists of two sub folders (train, val).\
+- Every dataset folder (say fdst) consists of two sub folders (train, val).
 - A subfolder (say train) may contain input and gt as subfolder.
-- validation fold does not have a gt folder
+- Validation fold does not have a gt folder.
                       
 Change the following paths in the train.py to train on respective datasets:\
 \
