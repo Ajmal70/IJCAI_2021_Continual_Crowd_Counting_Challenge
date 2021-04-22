@@ -11,15 +11,15 @@ The baseline is inspired from the unofficial implementation of CVPR 2016 paper "
 
 The dataset is designed to test continual semi-supervised learning for crowd counting in video frames. This benchmark consists of the union of three existing datasets (Mall, UCSD and FDST), augmented with the relevant ground truth in terms of density maps.
 
-The dataset can be downloaded from link below:
+The dataset can be downloaded from link below: //
 https://drive.google.com/file/d/1phQi86FvLXBoOeh9jeZ_-MomUbcGW04K/view?usp=sharing
 
-The train and validation (without groundtruth) is arranged as follows:
+The train and validation (without groundtruth) is arranged as follows: //
 
-dataset name: fdst
-                  -train
-                        - input
-                        - gt
+dataset name: fdst //
+                  -train //
+                        - input //
+                        - gt //
                   -val
                       -input
                       
