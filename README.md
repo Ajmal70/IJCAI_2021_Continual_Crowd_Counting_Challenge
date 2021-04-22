@@ -25,11 +25,6 @@ The train and validation (without groundtruth) is arranged as follows:\
 - A subfolder (say train) may contain input and gt as subfolder.
 - Validation fold does not have a gt folder.
                       
-Change the following paths in the train.py to train on respective datasets:\
-\
-train_path = './data/fdst/train/input/' \
-train_gt_path = './data/fdst/train/gt/' \
-val_path = './data/fdst/val/input/' 
                       
 ## Running the baseline
 \
