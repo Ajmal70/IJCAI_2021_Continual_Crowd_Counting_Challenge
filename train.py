@@ -29,13 +29,13 @@ def log_print(text, color=None, on_color=None, attrs=None):
 
 
 method = 'mcnn'
-dataset_name = 'shtechA'
+dataset_name = 'ucsd'
 output_dir = './saved_models/'
 
-train_path = './train/fdst_1/'
-train_gt_path = './train_gt/fdst_supervised_gt/'
-val_path = './val/'
-val_gt_path = './validation_gt/fdst_validation_gt_pt_00/'
+train_path = './data/ucsd/train/input/'
+train_gt_path = './data/ucsd/train/gt/'
+val_path = './data/ucsd/val/input/'
+#val_gt_path = './validation_gt/'
 
 #training configuration
 start_step = 0
