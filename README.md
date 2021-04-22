@@ -11,8 +11,25 @@ The baseline is inspired from the unofficial implementation of CVPR 2016 paper "
 
 The dataset is designed to test continual semi-supervised learning for crowd counting in video frames. This benchmark consists of the union of three existing datasets (Mall, UCSD and FDST), augmented with the relevant ground truth in terms of density maps.
 
-The description of training, validation and testing is described in this file briefly.
+The dataset can be downloaded from link below:
+https://drive.google.com/file/d/1phQi86FvLXBoOeh9jeZ_-MomUbcGW04K/view?usp=sharing
 
+The train and validation (without groundtruth) is arranged as follows:
 
+dataset name: fdst
+                  -train
+                        - input
+                        - gt
+                  -val
+                      -input
+                      
+Change the following path in the train.py to train on respective datasets.
 
+train_path = './data/fdst/train/input/'
+train_gt_path = './data/fdst/train/gt/'
+val_path = './data/fdst/val/input'
+                      
+## Running the baseline
 
+The training can be started by running:
+                                      python train.py
