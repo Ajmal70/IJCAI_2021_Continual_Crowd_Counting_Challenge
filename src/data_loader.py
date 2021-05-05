@@ -5,7 +5,7 @@ import random
 import pandas as pd
 
 class ImageDataLoader():
-    def __init__(self, data_path, gt_path,split, shuffle=False, gt_downsample=False, pre_load=False):
+    def __init__(self, data_path, gt_path,split, shuffle=False, gt_downsample=False, pre_load=False, Dataset="fdst"):
         #pre_load: if true, all training and validation images are loaded into CPU RAM for faster processing.
         #          This avoids frequent file reads. Use this only for small datasets.
         self.data_path = data_path
@@ -18,6 +18,7 @@ class ImageDataLoader():
         self.data_files.sort()
         print(self.data_files)
         self.shuffle = shuffle
+        self.Dataset=Dataset
         if shuffle:
             random.seed(2468)
         self.num_samples = len(self.data_files)
@@ -32,10 +33,13 @@ class ImageDataLoader():
                 img = img.astype(np.float32, copy=False)
                 ht = img.shape[0]
                 wd = img.shape[1]
-                ht_1 = (540/4)*4 # for fdst only  
-                wd_1 = (960/4)*4 # for fdst only
-                #ht_1 = (ht/4)*4  
-                #wd_1 = (wd/4)*4
+                if Dataset=="fdst":
+                  ht_1 = (540/4)*4  
+                  wd_1 = (960/4)*4 
+                else:
+                  ht_1 = (ht/4)*4  
+                  wd_1 = (wd/4)*4
+                #print(ht_1)
                 img = cv2.resize(img,(int(wd_1),int(ht_1)))
                 img = img.reshape((1,1,img.shape[0],img.shape[1]))
                 if self.split == 'train_split':
@@ -85,10 +89,13 @@ class ImageDataLoader():
                 img = img.astype(np.float32, copy=False)
                 ht = img.shape[0]
                 wd = img.shape[1]
-                ht_1 = (540/4)*4 # for fdst only  
-                wd_1 = (960/4)*4 # for fdst only
-                #ht_1 = (ht/4)*4
-                #wd_1 = (wd/4)*4
+                if Dataset=="fdst":
+                  ht_1 = (540/4)*4  
+                  wd_1 = (960/4)*4 
+                else:
+                  ht_1 = (ht/4)*4  
+                  wd_1 = (wd/4)*4
+
                 img = cv2.resize(img,(wd_1,ht_1))
                 img = img.reshape((1,1,img.shape[0],img.shape[1]))
                 if self.split == 'train_split':
@@ -121,7 +128,7 @@ class ImageDataLoader():
 # ImageDataLoader_Val_Test    
         
 class ImageDataLoader_Val_Test():
-    def __init__(self, data_path, gt_path,split,start_frame,end_frame,shuffle=False, gt_downsample=False, pre_load=False):
+    def __init__(self, data_path, gt_path,split,start_frame,end_frame,shuffle=False, gt_downsample=False, pre_load=False, Dataset="fdst"):
         #pre_load: if true, all training and validation images are loaded into CPU RAM for faster processing.
         #          This avoids frequent file reads. Use this only for small datasets.
         print('working')
@@ -132,12 +139,17 @@ class ImageDataLoader_Val_Test():
         self.pre_load = pre_load
         self.start_frame = start_frame
         self.end_frame = end_frame
+        self.Dataset= Dataset
         
         # self.data_files = [filename for filename in os.listdir(data_path) \
         #                    if os.path.isfile(os.path.join(data_path,filename))]
         self.data_files = []
         for i in range(self.start_frame,self.end_frame+1):
-            self.data_files.append('{:03d}.jpg'.format(i))
+
+            if Dataset=="fdst":
+              self.data_files.append('{:03d}.jpg'.format(i))
+            else:
+              self.data_files.append('{:04d}.jpg'.format(i))
 
         
         
@@ -158,10 +170,13 @@ class ImageDataLoader_Val_Test():
                 img = img.astype(np.float32, copy=False)
                 ht = img.shape[0]
                 wd = img.shape[1]
-                ht_1 = (540/4)*4 # for fdst only  
-                wd_1 = (960/4)*4 # for fdst only
-                #ht_1 = (ht/4)*4
-                #wd_1 = (wd/4)*4
+                if Dataset=="fdst":
+                  ht_1 = (540/4)*4  
+                  wd_1 = (960/4)*4 
+                else:
+                  ht_1 = (ht/4)*4  
+                  wd_1 = (wd/4)*4
+
                 img = cv2.resize(img,(int(wd_1),int(ht_1)))
                 img = img.reshape((1,1,img.shape[0],img.shape[1]))
                 if self.split == 'train_split':
@@ -211,10 +226,13 @@ class ImageDataLoader_Val_Test():
                 img = img.astype(np.float32, copy=False)
                 ht = img.shape[0]
                 wd = img.shape[1]
-                ht_1 = (540/4)*4 # for fdst only  
-                wd_1 = (960/4)*4 # for fdst only
-                #ht_1 = (ht/4)*4
-                #wd_1 = (wd/4)*4
+                if Dataset=="fdst":
+                  ht_1 = (540/4)*4  
+                  wd_1 = (960/4)*4 
+                else:
+                  ht_1 = (ht/4)*4  
+                  wd_1 = (wd/4)*4
+
                 img = cv2.resize(img,(wd_1,ht_1))
                 img = img.reshape((1,1,img.shape[0],img.shape[1]))
                 if self.split == 'train_split':
