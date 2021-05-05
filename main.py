@@ -24,7 +24,7 @@ import sys
 
 from src.crowd_count import CrowdCounter
 from src import network
-from src.data_loader import ImageDataLoader
+from src.data_loader import ImageDataLoader, ImageDataLoader_Val_Test
 from src.timer import Timer
 from src import utils
 from src.evaluate_model import evaluate_model
@@ -108,7 +108,15 @@ def train(net, train_loader,optimizer, num_epochs):
                 re_cnt = False
     return net
 
-def val(net, val_loader,optimizer, num_epochs):
+def val(net,val_path,optimizer, num_epochs):
+
+    start_frame = 401
+    end_frame = 500
+    val_loader = ImageDataLoader_Val_Test(val_path, None,'validation_split',start_frame,end_frame, shuffle=False, gt_downsample=True, pre_load=True)
+
+
+
+
     log_file = open(args.SAVE_ROOT+"/"+args.Dataset+"_validation.log","w",1)
     log_print("Validation/Self Training ....", color='green', attrs=['bold'])
     # training
@@ -166,8 +174,6 @@ train_gt_path = args.DATA_ROOT+'/train/gt/'
 val_path = args.DATA_ROOT+'/val/input/'
 #test_path = argparse.DATA_ROOT+'/test/input/'
 
-data_loader_train = ImageDataLoader(train_path, train_gt_path,'train_split', shuffle=False, gt_downsample=True, pre_load=True)
-data_loader_val = ImageDataLoader(val_path, None,'validation_split', shuffle=False, gt_downsample=True, pre_load=True)
 #data_loader_test = ImageDataLoader(test_path, None,'test_split', shuffle=False, gt_downsample=True, pre_load=True)
 
 
@@ -205,12 +211,14 @@ if not os.path.exists(args.SAVE_ROOT):
 # train, validation/self training and testing model
 
 if args.MODE == 'all' or args.MODE == 'train':
+    data_loader_train = ImageDataLoader(train_path, train_gt_path,'train_split', shuffle=False, gt_downsample=True, pre_load=True)
+
     net = train(net, data_loader_train,optimizer,args.MAX_EPOCHS)
     network.save_net(args.SAVE_ROOT+'/'+args.Dataset+'_trained_model.h5', net) 
 
 
 if args.MODE == 'all' or args.MODE == 'val':
-    net = val(net, data_loader_val,optimizer,args.VAL_EPOCHS)
+    net = val(net,val_path, optimizer,args.VAL_EPOCHS)
     network.save_net(args.SAVE_ROOT+'/'+args.Dataset+'_Self_trained_model.h5', net) 
 
 # if args.MODE == 'all' or args.MODE == 'test':
