@@ -32,8 +32,10 @@ class ImageDataLoader():
                 img = img.astype(np.float32, copy=False)
                 ht = img.shape[0]
                 wd = img.shape[1]
-                ht_1 = (ht/4)*4
-                wd_1 = (wd/4)*4
+                ht_1 = (540/4)*4 # for fdst only  
+                wd_1 = (960/4)*4 # for fdst only
+                #ht_1 = (ht/4)*4  
+                #wd_1 = (wd/4)*4
                 img = cv2.resize(img,(int(wd_1),int(ht_1)))
                 img = img.reshape((1,1,img.shape[0],img.shape[1]))
                 if self.split == 'train_split':
@@ -41,10 +43,10 @@ class ImageDataLoader():
                     den  = den.astype(np.float32, copy=False)
 
                     if self.gt_downsample:
-                        wd_1 = wd_1/4
-                        ht_1 = ht_1/4
-                        den = cv2.resize(den,(int(wd_1),int(ht_1)))                
-                        den = den * ((wd*ht)/(wd_1*ht_1))
+                        wd_2 = wd_1/4
+                        ht_2 = ht_1/4
+                        den = cv2.resize(den,(int(wd_2),int(ht_2)))                
+                        den = den * ((wd_1*ht_1)/(wd_2*ht_2))
                     else:
                         den = cv2.resize(den,(wd_1,ht_1))
                         den = den * ((wd*ht)/(wd_1*ht_1))
@@ -83,18 +85,20 @@ class ImageDataLoader():
                 img = img.astype(np.float32, copy=False)
                 ht = img.shape[0]
                 wd = img.shape[1]
-                ht_1 = (ht/4)*4
-                wd_1 = (wd/4)*4
+                ht_1 = (540/4)*4 # for fdst only  
+                wd_1 = (960/4)*4 # for fdst only
+                #ht_1 = (ht/4)*4
+                #wd_1 = (wd/4)*4
                 img = cv2.resize(img,(wd_1,ht_1))
                 img = img.reshape((1,1,img.shape[0],img.shape[1]))
                 if self.split == 'train_split':
                     den = pd.read_csv(os.path.join(self.gt_path,os.path.splitext(fname)[0] + '.csv'), sep=',',header=None).as_matrix()                        
                     den  = den.astype(np.float32, copy=False)
                     if self.gt_downsample:
-                        wd_1 = wd_1/4
-                        ht_1 = ht_1/4
-                        den = cv2.resize(den,(wd_1,ht_1))                
-                        den = den * ((wd*ht)/(wd_1*ht_1))
+                        wd_2 = wd_1/4
+                        ht_2 = ht_1/4
+                        den = cv2.resize(den,(int(wd_2),int(ht_2)))                
+                        den = den * ((wd_1*ht_1)/(wd_2*ht_2))
                     else:
                         den = cv2.resize(den,(wd_1,ht_1))
                         den = den * ((wd*ht)/(wd_1*ht_1))
@@ -133,7 +137,7 @@ class ImageDataLoader_Val_Test():
         #                    if os.path.isfile(os.path.join(data_path,filename))]
         self.data_files = []
         for i in range(self.start_frame,self.end_frame+1):
-            self.data_files.append('{:04d}.jpg'.format(i))
+            self.data_files.append('{:03d}.jpg'.format(i))
 
         
         
@@ -154,8 +158,10 @@ class ImageDataLoader_Val_Test():
                 img = img.astype(np.float32, copy=False)
                 ht = img.shape[0]
                 wd = img.shape[1]
-                ht_1 = (ht/4)*4
-                wd_1 = (wd/4)*4
+                ht_1 = (540/4)*4 # for fdst only  
+                wd_1 = (960/4)*4 # for fdst only
+                #ht_1 = (ht/4)*4
+                #wd_1 = (wd/4)*4
                 img = cv2.resize(img,(int(wd_1),int(ht_1)))
                 img = img.reshape((1,1,img.shape[0],img.shape[1]))
                 if self.split == 'train_split':
@@ -163,10 +169,10 @@ class ImageDataLoader_Val_Test():
                     den  = den.astype(np.float32, copy=False)
 
                     if self.gt_downsample:
-                        wd_1 = wd_1/4
-                        ht_1 = ht_1/4
-                        den = cv2.resize(den,(int(wd_1),int(ht_1)))                
-                        den = den * ((wd*ht)/(wd_1*ht_1))
+                        wd_2 = wd_1/4
+                        ht_2 = ht_1/4
+                        den = cv2.resize(den,(int(wd_2),int(ht_2)))                
+                        den = den * ((wd_1*ht_1)/(wd_2*ht_2))
                     else:
                         den = cv2.resize(den,(wd_1,ht_1))
                         den = den * ((wd*ht)/(wd_1*ht_1))
@@ -205,18 +211,20 @@ class ImageDataLoader_Val_Test():
                 img = img.astype(np.float32, copy=False)
                 ht = img.shape[0]
                 wd = img.shape[1]
-                ht_1 = (ht/4)*4
-                wd_1 = (wd/4)*4
+                ht_1 = (540/4)*4 # for fdst only  
+                wd_1 = (960/4)*4 # for fdst only
+                #ht_1 = (ht/4)*4
+                #wd_1 = (wd/4)*4
                 img = cv2.resize(img,(wd_1,ht_1))
                 img = img.reshape((1,1,img.shape[0],img.shape[1]))
                 if self.split == 'train_split':
                     den = pd.read_csv(os.path.join(self.gt_path,os.path.splitext(fname)[0] + '.csv'), sep=',',header=None).as_matrix()                        
                     den  = den.astype(np.float32, copy=False)
                     if self.gt_downsample:
-                        wd_1 = wd_1/4
-                        ht_1 = ht_1/4
-                        den = cv2.resize(den,(wd_1,ht_1))                
-                        den = den * ((wd*ht)/(wd_1*ht_1))
+                        wd_2 = wd_1/4
+                        ht_2 = ht_1/4
+                        den = cv2.resize(den,(wd_2,ht_2))                
+                        den = den * ((wd_1*ht_1)/(wd_2*ht_2))
                     else:
                         den = cv2.resize(den,(wd_1,ht_1))
                         den = den * ((wd*ht)/(wd_1*ht_1))
