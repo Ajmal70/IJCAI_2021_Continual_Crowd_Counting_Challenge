@@ -110,14 +110,12 @@ def train(net, train_loader,optimizer, num_epochs):
 
 def val(net,val_path,optimizer, num_epochs):
 
-    #start_frame = 001
-    #end_frame = 300
-    
+        
     num_session=3 # for fdst
     sessions_list = []
     ses_size = 100
-    val_len=300 # for fdst
-    for i in range(1,300,ses_size):
+    val_len=300 # for fdst =300, for mall/ucsd= 1200
+    for i in range(1,300,ses_size): # for i in range(401,1200,ses_size): for mall/ucsd
       sessions_list.append(i)
     sessions_list.append(val_len)
     #print("Validation list: ", sessions_list)
@@ -170,8 +168,68 @@ def val(net,val_path,optimizer, num_epochs):
 
     return net
 
+def test(net,test_path,optimizer, num_epochs):
 
-def test(net, test_loader):
+        
+    num_session=3 # for fdst
+    sessions_list = []
+    ses_size = 100
+    test_len=300 # for fdst =300, for mall/ucsd= 1200
+    for i in range(1,300,ses_size): # for i in range(401,1200,ses_size): for mall/ucsd
+      sessions_list.append(i)
+    sessions_list.append(test_len)
+    #print("Validation list: ", sessions_list)
+    for test_inc in range(len(sessions_list)-1):
+        start_frame = sessions_list[val_inc]
+        end_frame = sessions_list[val_inc+1]
+        print('start:,end:', (start_frame,end_frame))
+
+        test_loader = ImageDataLoader_Val_Test(test_path, None,'test_split',start_frame, end_frame, shuffle=False, gt_downsample=True, pre_load=True)
+        log_file = open(args.SAVE_ROOT+"/"+args.Dataset+"_test.log","w",1)
+        log_print("test/Self Training ....", color='green', attrs=['bold'])
+        # training
+        train_loss = 0
+        step_cnt = 0
+        re_cnt = False
+        t = Timer()
+        t.tic()
+        for epoch in range(1,num_epochs+1):
+            step = -1
+            train_loss = 0
+            for blob in val_loader:                
+                step = step + 1        
+                im_data = blob['data']
+                net.training = False
+                gt_data = net(im_data)
+                gt_data = gt_data.cpu().detach().numpy()
+                net.training = True
+                density_map = net(im_data, gt_data)
+                loss = net.loss
+                train_loss += loss.data
+                step_cnt += 1
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+            
+                if step % disp_interval == 0:            
+                  duration = t.toc(average=False)
+                  fps = step_cnt / duration
+                  gt_count = np.sum(gt_data)    
+                  density_map = density_map.data.cpu().numpy()
+                  et_count = np.sum(density_map)
+                  utils.save_results(im_data,gt_data,density_map, args.SAVE_ROOT)
+                  log_text = 'epoch: %4d, step %4d, Time: %.4fs, gt_cnt: %4.1f, et_cnt: %4.1f' % (epoch,
+                      step, 1./fps, gt_count,et_count)
+                  log_print(log_text, color='green', attrs=['bold'])
+                  re_cnt = True   
+                if re_cnt:                                
+                  t.tic()
+                  re_cnt = False
+
+    return net
+
+
+def eval_test(net, test_loader):
    
 
     return model
