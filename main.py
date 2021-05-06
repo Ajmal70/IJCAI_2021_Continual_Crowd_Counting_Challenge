@@ -180,13 +180,108 @@ def val(net,val_path,optimizer, num_epochs, Dataset):
     return net
 
 def test(net,test_path,optimizer, num_epochs):
+    if Dataset=="fdst":
+      num_sessions=3
+      val_len=300
+      low_limit=1
+      high_limit=300
+    else:
+        num_sessions=8
+        val_len=1200
+        low_limit=401
+        high_limit=1200
+    #print(num_sessions)
+
+
+    sessions_list = []
+    ses_size = 100
+    
+    for i in range(low_limit, high_limit,ses_size): 
+      sessions_list.append(i)
+    sessions_list.append(val_len)
+    #print("Validation list: ", sessions_list)
+    for val_inc in range(len(sessions_list)-1):
+        start_frame = sessions_list[val_inc]
+        end_frame = sessions_list[val_inc+1]
+        #print('start:,end:', (start_frame,end_frame))
+
+        val_loader = ImageDataLoader_Val_Test(val_path, None,'validation_split',start_frame, end_frame, shuffle=False, gt_downsample=True, pre_load=True, Dataset="ucsd")
+        log_file = open(args.SAVE_ROOT+"/"+args.Dataset+"_validation.log","w",1)
+        log_print("Validation/Self Training ....", color='green', attrs=['bold'])
+        # training
+        train_loss = 0
+        step_cnt = 0
+        re_cnt = False
+        t = Timer()
+        t.tic()
+        for epoch in range(1,num_epochs+1):
+            step = -1
+            train_loss = 0
+            for blob in val_loader:                
+                step = step + 1        
+                im_data = blob['data']
+                net.training = False
+                gt_data = net(im_data)
+                gt_data = gt_data.cpu().detach().numpy()
+                net.training = True
+                density_map = net(im_data, gt_data)
+                loss = net.loss
+                train_loss += loss.data
+                step_cnt += 1
+                optimizer.zero_grad()
+                loss.backward()
+                optimizer.step()
+            
+                if step % disp_interval == 0:            
+                  duration = t.toc(average=False)
+                  fps = step_cnt / duration
+                  gt_count = np.sum(gt_data)    
+                  density_map = density_map.data.cpu().numpy()
+                  et_count = np.sum(density_map)
+                  utils.save_results(im_data,gt_data,density_map, args.SAVE_ROOT)
+                  log_text = 'epoch: %4d, step %4d, Time: %.4fs, gt_cnt: %4.1f, et_cnt: %4.1f' % (epoch,
+                      step, 1./fps, gt_count,et_count)
+                  log_print(log_text, color='green', attrs=['bold'])
+                  re_cnt = True   
+                if re_cnt:                                
+                  t.tic()
+                  re_cnt = False
+
 
     return net
 
 
-def eval_test(net, test_loader):
-   
+def eval_test(net, data_loader):
+    torch.backends.cudnn.enabled = True
+    torch.backends.cudnn.benchmark = False 
 
+    output_dir = './output'
+    model_path = './models/fdst_trained_model.h5'
+    model_name = os.path.basename(model_path).split('.')[0]
+
+    if not os.path.exists(output_dir):
+           os.mkdir(output_dir)
+    output_dir = os.path.join(output_dir, 'density_maps_' + model_name)
+    if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+
+
+    trained_model = os.path.join(model_path)
+    network.load_net(trained_model, net)
+    net.cuda()
+    net.eval()
+#load test data
+    data_loader = ImageDataLoader(data_path, None, shuffle=False, gt_downsample=True, pre_load=True)
+
+    for blob in data_loader:                        
+        im_data = blob['data']
+        net.training = False
+        density_map = net(im_data)
+        density_map = density_map.data.cpu().numpy()
+        new_dm= density_map.reshape([ density_map.shape[2], density_map.shape[3] ])
+        np.savetxt( output_dir + 'output_' + blob['fname'].split('.')[0] +'.csv', new_dm, delimiter=',', fmt='%.6f')
+
+   
     return model
 
 
@@ -242,6 +337,11 @@ if args.MODE == 'all' or args.MODE == 'train':
 if args.MODE == 'all' or args.MODE == 'val':
     net = val(net,val_path, optimizer,args.VAL_EPOCHS, Dataset="ucsd")
     network.save_net(args.SAVE_ROOT+'/'+args.Dataset+'_Self_trained_model.h5', net) 
+    
+#if args.MODE == 'eval_test' :
+#    net = val(net,data_path)
+    
+    
 
 # if args.MODE == 'all' or args.MODE == 'test':
 #     net = test(net, data_loader_test)
