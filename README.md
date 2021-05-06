@@ -18,7 +18,7 @@ bash download_data.sh
 OR 
 
 Can be downloaded from the link below:\
-https://drive.google.com/file/d/1phQi86FvLXBoOeh9jeZ_-MomUbcGW04K/view?usp=sharing
+https://drive.google.com/file/d/1N71uZvw9Z3wqHRucJKmvmOwDWNIfK_1y/view?usp=sharing
 
 The train and validation (without groundtruth) is arranged as follows:\
 - Every dataset folder (say fdst) consists of two sub folders (train, val).
