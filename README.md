@@ -49,3 +49,4 @@ Arguments
 --learning_rate   --> Learning rate
 
 ```
+Currently the dataloader and self training functions are parametrized on fdst dataset. Please change it to mall/ucsd wherever needed. 
