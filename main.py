@@ -108,7 +108,7 @@ def train(net, train_loader,optimizer, num_epochs):
                 re_cnt = False
     return net
 
-def val(net,val_path,optimizer, num_epochs, Dataset):
+def val(net,val_path,optimizer, num_epochs, Dataset=args.Dataset):
 
     if Dataset=="fdst":
       num_sessions=3
@@ -179,7 +179,7 @@ def val(net,val_path,optimizer, num_epochs, Dataset):
 
     return net
 
-def test(net,test_path,optimizer, num_epochs):
+def test(net,test_path,optimizer, num_epochs, Dataset=args.Dataset):
     if Dataset=="fdst":
       num_sessions=3
       val_len=300
@@ -205,9 +205,9 @@ def test(net,test_path,optimizer, num_epochs):
         end_frame = sessions_list[val_inc+1]
         #print('start:,end:', (start_frame,end_frame))
 
-        val_loader = ImageDataLoader_Val_Test(val_path, None,'validation_split',start_frame, end_frame, shuffle=False, gt_downsample=True, pre_load=True, Dataset="ucsd")
-        log_file = open(args.SAVE_ROOT+"/"+args.Dataset+"_validation.log","w",1)
-        log_print("Validation/Self Training ....", color='green', attrs=['bold'])
+        test_loader = ImageDataLoader_Val_Test(test_path, None,'validation_split',start_frame, end_frame, shuffle=False, gt_downsample=True, pre_load=True, Dataset="ucsd")
+        log_file = open(args.SAVE_ROOT+"/"+args.Dataset+"_test.log","w",1)
+        log_print("Test/Self Training ....", color='green', attrs=['bold'])
         # training
         train_loss = 0
         step_cnt = 0
@@ -250,18 +250,18 @@ def test(net,test_path,optimizer, num_epochs):
 
     return net
 
-
-def eval_test(net, data_loader):
+# evaluation for supervised trained model (validation)
+def eval_val(net, val_path):
     torch.backends.cudnn.enabled = True
     torch.backends.cudnn.benchmark = False 
 
     output_dir = './output'
-    model_path = './models/fdst_trained_model.h5'
+    model_path = args.Dataset+ '_trained_model.h5'
     model_name = os.path.basename(model_path).split('.')[0]
 
     if not os.path.exists(output_dir):
            os.mkdir(output_dir)
-    output_dir = os.path.join(output_dir, 'density_maps_' + model_name)
+    output_dir = os.path.join(output_dir, 'dm_' + model_name)
     if not os.path.exists(output_dir):
             os.mkdir(output_dir)
 
@@ -270,19 +270,156 @@ def eval_test(net, data_loader):
     network.load_net(trained_model, net)
     net.cuda()
     net.eval()
-#load test data
-    data_loader = ImageDataLoader(data_path, None, shuffle=False, gt_downsample=True, pre_load=True)
 
-    for blob in data_loader:                        
+    val_loader = ImageDataLoader(val_path, None, 'validation_split', shuffle=False, gt_downsample=True, pre_load=True , Dataset=args.Dataset)
+
+    for blob in val_loader:                        
         im_data = blob['data']
         net.training = False
         density_map = net(im_data)
         density_map = density_map.data.cpu().numpy()
         new_dm= density_map.reshape([ density_map.shape[2], density_map.shape[3] ])
         np.savetxt( output_dir + 'output_' + blob['fname'].split('.')[0] +'.csv', new_dm, delimiter=',', fmt='%.6f')
-
    
-    return model
+    return net
+
+# evaluation for supervised trained model (test)
+def eval_test(net, test_path):
+    torch.backends.cudnn.enabled = True
+    torch.backends.cudnn.benchmark = False 
+
+    output_dir = './output'
+    model_path = args.Dataset+ '_trained_model.h5'
+    model_name = os.path.basename(model_path).split('.')[0]
+
+    if not os.path.exists(output_dir):
+           os.mkdir(output_dir)
+    output_dir = os.path.join(output_dir, 'dm_' + model_name)
+    if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+
+
+    trained_model = os.path.join(model_path)
+    network.load_net(trained_model, net)
+    net.cuda()
+    net.eval()
+
+    test_loader = ImageDataLoader(test_path, None, 'test_split', shuffle=False, gt_downsample=True, pre_load=True , Dataset=args.Dataset)
+
+    for blob in val_loader:                        
+        im_data = blob['data']
+        net.training = False
+        density_map = net(im_data)
+        density_map = density_map.data.cpu().numpy()
+        new_dm= density_map.reshape([ density_map.shape[2], density_map.shape[3] ])
+        np.savetxt( output_dir + 'output_' + blob['fname'].split('.')[0] +'.csv', new_dm, delimiter=',', fmt='%.6f')
+   
+    return net
+
+
+
+
+# evaluation for self trained model (validation)
+def eval_val_self(net, val_path):
+    torch.backends.cudnn.enabled = True
+    torch.backends.cudnn.benchmark = False 
+
+    output_dir = './output'
+    model_path = args.Dataset+ '_Self_trained_model.h5'
+    model_name = os.path.basename(model_path).split('.')[0]
+
+    if not os.path.exists(output_dir):
+           os.mkdir(output_dir)
+    output_dir = os.path.join(output_dir, 'dm_' + model_name)
+    if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+
+
+    trained_model = os.path.join(model_path)
+    network.load_net(trained_model, net)
+    net.cuda()
+    net.eval()
+
+    val_loader = ImageDataLoader(val_path, None, 'validation_split', shuffle=False, gt_downsample=True, pre_load=True , Dataset=args.Dataset)
+
+    for blob in val_loader:                        
+        im_data = blob['data']
+        net.training = False
+        density_map = net(im_data)
+        density_map = density_map.data.cpu().numpy()
+        new_dm= density_map.reshape([ density_map.shape[2], density_map.shape[3] ])
+        np.savetxt( output_dir + 'output_' + blob['fname'].split('.')[0] +'.csv', new_dm, delimiter=',', fmt='%.6f')
+   
+    return net
+
+# evaluation for self trained model (test)
+def eval_test_self(net, test_path):
+    torch.backends.cudnn.enabled = True
+    torch.backends.cudnn.benchmark = False 
+
+    output_dir = './output'
+    model_path = args.Dataset+ '_Self_trained_model.h5'
+    model_name = os.path.basename(model_path).split('.')[0]
+
+    if not os.path.exists(output_dir):
+           os.mkdir(output_dir)
+    output_dir = os.path.join(output_dir, 'dm_' + model_name)
+    if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+
+
+    trained_model = os.path.join(model_path)
+    network.load_net(trained_model, net)
+    net.cuda()
+    net.eval()
+
+    test_loader = ImageDataLoader(test_path, None, 'test_split', shuffle=False, gt_downsample=True, pre_load=True , Dataset=args.Dataset)
+
+    for blob in val_loader:                        
+        im_data = blob['data']
+        net.training = False
+        density_map = net(im_data)
+        density_map = density_map.data.cpu().numpy()
+        new_dm= density_map.reshape([ density_map.shape[2], density_map.shape[3] ])
+        np.savetxt( output_dir + 'output_' + blob['fname'].split('.')[0] +'.csv', new_dm, delimiter=',', fmt='%.6f')
+   
+    return net
+
+# evaluation for self trained model (V+T self_trained model)
+def eval_test_self(net, test_path):
+    torch.backends.cudnn.enabled = True
+    torch.backends.cudnn.benchmark = False 
+
+    output_dir = './output'
+    model_path = args.Dataset+ '_Self_trained_model.h5'
+    model_name = os.path.basename(model_path).split('.')[0]
+
+    if not os.path.exists(output_dir):
+           os.mkdir(output_dir)
+    output_dir = os.path.join(output_dir, 'dm_' + model_name)
+    if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+
+
+    trained_model = os.path.join(model_path)
+    network.load_net(trained_model, net)
+    net.cuda()
+    net.eval()
+
+    test_loader = ImageDataLoader(test_path, None, 'test_split', shuffle=False, gt_downsample=True, pre_load=True , Dataset=args.Dataset)
+
+    for blob in val_loader:                        
+        im_data = blob['data']
+        net.training = False
+        density_map = net(im_data)
+        density_map = density_map.data.cpu().numpy()
+        new_dm= density_map.reshape([ density_map.shape[2], density_map.shape[3] ])
+        np.savetxt( output_dir + 'output_' + blob['fname'].split('.')[0] +'.csv', new_dm, delimiter=',', fmt='%.6f')
+   
+    return net
+
+
+
 
 
 
@@ -328,20 +465,39 @@ if not os.path.exists(args.SAVE_ROOT):
 # train, validation/self training and testing model
 
 if args.MODE == 'all' or args.MODE == 'train':
-    data_loader_train = ImageDataLoader(train_path, train_gt_path,'train_split', shuffle=False, gt_downsample=True, pre_load=True, Dataset="fdst")
-
+    data_loader_train = ImageDataLoader(train_path, train_gt_path,'train_split', shuffle=False, gt_downsample=True, pre_load=True, Dataset=args.Dataset)
     net = train(net, data_loader_train,optimizer,args.MAX_EPOCHS)
     network.save_net(args.SAVE_ROOT+'/'+args.Dataset+'_trained_model.h5', net) 
 
 
 if args.MODE == 'all' or args.MODE == 'val':
-    net = val(net,val_path, optimizer,args.VAL_EPOCHS, Dataset="ucsd")
+    net = val(net,val_path, optimizer,args.VAL_EPOCHS, Dataset=args.Dataset)
     network.save_net(args.SAVE_ROOT+'/'+args.Dataset+'_Self_trained_model.h5', net) 
     
-#if args.MODE == 'eval_test' :
-#    net = val(net,data_path)
     
     
 
 # if args.MODE == 'all' or args.MODE == 'test':
-#     net = test(net, data_loader_test)
+#     net = test(net, test_path)
+
+
+if args.MODE == 'eval_val' :
+    net = eval_val(net,val_path)
+
+if args.MODE == 'eval_test' :
+    net = eval_test(net,test_path)
+
+
+if args.MODE == 'eval_val_self' :
+    net = eval_val_self(net,val_path)
+
+if args.MODE == 'eval_test_self' :
+    net = eval_val_self(net,test_path)
+
+if args.MODE == 'eval_val_test_self' :
+    net = eval_val_test_self(net,test_path)
+
+
+
+
+
