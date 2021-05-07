@@ -481,22 +481,27 @@ if args.MODE == 'all' or args.MODE == 'val':
 #     net = test(net, test_path)
 
 
-if args.MODE == 'eval_val' :
+if args.MODE == 'all_eval' or args.MODE== 'eval_val' :
     net = eval_val(net,val_path)
 
-if args.MODE == 'eval_test' :
+if args.MODE == 'all_eval' or args.MODE== 'eval_test' :   
     net = eval_test(net,test_path)
 
-
-if args.MODE == 'eval_val_self' :
+if args.MODE == 'all_eval_self' or args.MODE == 'eval_val_self' :
     net = eval_val_self(net,val_path)
 
-if args.MODE == 'eval_test_self' :
-    net = eval_val_self(net,test_path)
+if  args.MODE == 'all_eval_self' or args.MODE == 'eval_test_self' :
+    net = eval_test_self(net,test_path)
 
-if args.MODE == 'eval_val_test_self' :
+if args.MODE == 'all_eval_val_test_self' or args.MODE == 'eval_val_test_self_val' :
+    net = eval_val_test_self(net,val_path)
+
+if args.MODE == 'all_eval_val_test_self' or args.MODE == 'eval_val_test_self_test' :
     net = eval_val_test_self(net,test_path)
+    
 
+    
+    
 
 
 
