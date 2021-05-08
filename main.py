@@ -177,6 +177,25 @@ def val(net,val_path,optimizer, num_epochs, Dataset=args.Dataset):
                   t.tic()
                   re_cnt = False
 
+        torch.backends.cudnn.enabled = True
+        torch.backends.cudnn.benchmark = False 
+
+        session= str(sessions_list[val_inc])
+        output_dir = './densitymaps/csv' + session 
+        net.cuda()
+        net.eval()
+
+        all_val_loader = ImageDataLoader(val_path, None, 'validation_split', shuffle=False, gt_downsample=True, pre_load=True , Dataset=args.Dataset)
+
+        for blob in all_val_loader:                        
+            im_data = blob['data']
+            net.training = False
+            density_map = net(im_data)
+            density_map = density_map.data.cpu().numpy()
+            new_dm= density_map.reshape([ density_map.shape[2], density_map.shape[3] ])
+            
+            np.savetxt(output_dir + '_output_' + blob['fname'].split('.')[0] +'.csv', new_dm, delimiter=',', fmt='%.6f')
+
     return net
 
 def test(net,test_path,optimizer, num_epochs, Dataset=args.Dataset):
@@ -475,8 +494,6 @@ if args.MODE == 'all' or args.MODE == 'val':
     network.save_net(args.SAVE_ROOT+'/'+args.Dataset+'_Self_trained_model.h5', net) 
     
     
-    
-
 # if args.MODE == 'all' or args.MODE == 'test':
 #     net = test(net, test_path)
 
