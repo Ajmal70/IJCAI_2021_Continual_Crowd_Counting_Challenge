@@ -292,15 +292,6 @@ def test(net,test_path,optimizer, num_epochs, Dataset=args.Dataset):
     return net
 
 
-# val+test combine
-
-
-
-
-
-
-
-
 
 # evaluation for supervised trained model (validation)
 def eval_val(net, val_path):
