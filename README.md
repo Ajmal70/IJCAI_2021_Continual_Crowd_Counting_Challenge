@@ -36,13 +36,10 @@ python main.py --DATA_ROOT=data/mall --SAVE_ROOT=Outputs --Dataset=mall --MODE=a
 
 python main.py --DATA_ROOT=data/ucsd --SAVE_ROOT=Outputs --Dataset=ucsd --MODE=all --MAX_EPOCHS=100 --VAL_EPOCHS=2 --learning_rate=0.00001
 
-Evaluating the models
+Evaluating the supevised models
 
-python main.py --DATA_ROOT=data/fdst --SAVE_ROOT=Outputs --Dataset=ucsd --MODE=all_eval --MAX_EPOCHS=100 --VAL_EPOCHS=2 --learning_rate=0.00001
+python main.py --DATA_ROOT=data/fdst --SAVE_ROOT=Outputs --Dataset=ucsd --MODE= eval_val --MAX_EPOCHS=100 --VAL_EPOCHS=2 --learning_rate=0.00001
 
-python main.py --DATA_ROOT=data/mall --SAVE_ROOT=Outputs --Dataset=ucsd --MODE=all_eval_self --MAX_EPOCHS=100 --VAL_EPOCHS=2 --learning_rate=0.00001
-
-python main.py --DATA_ROOT=data/ucsd --SAVE_ROOT=Outputs --Dataset=ucsd --MODE= all_eval_val_test --MAX_EPOCHS=100 --VAL_EPOCHS=2 --learning_rate=0.00001
 
 
 Arguments  
@@ -50,7 +47,7 @@ Arguments
 --DATA_ROOT       --> The directory to dataset
 --SAVE_ROOT       --> The directory where you want to save the trained models
 --Dataset         --> There are three datasets (fdst, mall, ucsd)
---MODE            --> Mode represent which specific section you want to run i.e., all, train, val, test and eval
+--MODE            --> Mode represent which specific section you want to run i.e., all, train, val, test and eval_val
 --MAX_EPOCHS      --> Training epochs
 --VAL_EPOCHS      --> Validation epochs
 --learning_rate   --> Learning rate
