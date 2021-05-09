@@ -183,7 +183,7 @@ def val(net,val_path,optimizer, num_epochs, Dataset=args.Dataset):
 
         session= str(sessions_list[val_inc])
         network.save_net(args.SAVE_ROOT+'/'+args.Dataset+ session +'_Self_trained_model_val.h5', net) 
-        output_dir = './densitymaps/' + session 
+        output_dir = './densitymaps/' + args.Dataset+ session 
         net.cuda()
         net.eval()
 
@@ -272,9 +272,9 @@ def test(net,test_path,optimizer, num_epochs, Dataset=args.Dataset):
         torch.backends.cudnn.enabled = True
         torch.backends.cudnn.benchmark = False 
 
-        session= str(sessions_list[val_inc])
+        session= str(sessions_list[test_inc])
         network.save_net(args.SAVE_ROOT+'/'+args.Dataset+ session +'_self_trained_model_test.h5', net) 
-        output_dir = './densitymaps/' + session 
+        output_dir = './densitymaps/' + args.Dataset + session 
         net.cuda()
         net.eval()
 
@@ -364,7 +364,7 @@ def eval_test(net, test_path):
 train_path = args.DATA_ROOT+'/train/input/'
 train_gt_path = args.DATA_ROOT+'/train/gt/'
 val_path = args.DATA_ROOT+'/val/input/'
-#test_path = argparse.DATA_ROOT+'/test/input/'
+test_path = args.DATA_ROOT+'/test/input/'
 
 #data_loader_test = ImageDataLoader(test_path, None,'test_split', shuffle=False, gt_downsample=True, pre_load=True)
 
@@ -393,8 +393,10 @@ trained_model= 'pretrained.h5'
 
 if args.MODE == 'val':
     trained_model= args.SAVE_ROOT+'/'+args.Dataset+'_trained_model.h5'
+    print('loading supervised trained model weights')
 if args.MODE == 'test':
     trained_model= args.SAVE_ROOT+'/'+args.Dataset+'_self_trained_model_val.h5'
+    print('loading self learned val model weights')
 
     
 network.load_net(trained_model, net)
@@ -420,12 +422,12 @@ if args.MODE == 'all' or args.MODE == 'train':
 
 if args.MODE == 'all' or args.MODE == 'val':
     net = val(net,val_path, optimizer,args.VAL_EPOCHS, Dataset=args.Dataset)
-    network.save_net(args.SAVE_ROOT+'/'+args.Dataset+'_self_trained_model.h5', net) 
+    network.save_net(args.SAVE_ROOT+'/'+args.Dataset+'_self_trained_model_val.h5', net) 
     
     
-#if args.MODE == 'all' or args.MODE == 'test':
-#    net = val(net,val_path, optimizer,args.VAL_EPOCHS, Dataset=args.Dataset)
-#    network.save_net(args.SAVE_ROOT+'/'+args.Dataset+'_self_trained_model.h5', net)
+if args.MODE == 'all' or args.MODE == 'test':
+    net = test(net,test_path, optimizer,args.VAL_EPOCHS, Dataset=args.Dataset)
+    network.save_net(args.SAVE_ROOT+'/'+args.Dataset+'_self_trained_model_test.h5', net)
 
 #if args.MODE == 'eval_all' or args.MODE == 'eval_val':
 #    eval_val(net, val_path)
