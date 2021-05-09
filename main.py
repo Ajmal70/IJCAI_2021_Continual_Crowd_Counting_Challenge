@@ -204,14 +204,14 @@ def test(net,test_path,optimizer, num_epochs, Dataset=args.Dataset):
 
     if Dataset=="fdst":
       num_sessions=3
-      test_len=300
-      low_limit=1
-      high_limit=300
+      test_len=750
+      low_limit=451
+      high_limit=750
     else:
         num_sessions=8
-        test_len=1200
-        low_limit=401
-        high_limit=1200
+        test_len=2000
+        low_limit=1201
+        high_limit=2000
     #print(num_sessions)
 
 
@@ -420,14 +420,18 @@ if args.MODE == 'all' or args.MODE == 'train':
 
 if args.MODE == 'all' or args.MODE == 'val':
     net = val(net,val_path, optimizer,args.VAL_EPOCHS, Dataset=args.Dataset)
-    #network.save_net(args.SAVE_ROOT+'/'+args.Dataset+'_self_trained_model.h5', net) 
+    network.save_net(args.SAVE_ROOT+'/'+args.Dataset+'_self_trained_model.h5', net) 
     
     
-# if args.MODE == 'all' or args.MODE == 'test':
-#      net = val(net,val_path, optimizer,args.VAL_EPOCHS, Dataset=args.Dataset)
-    #  network.save_net(args.SAVE_ROOT+'/'+args.Dataset+'_self_trained_model.h5', net)
+#if args.MODE == 'all' or args.MODE == 'test':
+#    net = val(net,val_path, optimizer,args.VAL_EPOCHS, Dataset=args.Dataset)
+#    network.save_net(args.SAVE_ROOT+'/'+args.Dataset+'_self_trained_model.h5', net)
 
+#if args.MODE == 'eval_all' or args.MODE == 'eval_val':
+#    eval_val(net, val_path)
 
+#if args.MODE == 'eval_all' or args.MODE == 'eval_test':
+#    eval_test(net, test_path)
 
 
     
