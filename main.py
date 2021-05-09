@@ -136,7 +136,7 @@ def val(net,val_path,optimizer, num_epochs, Dataset=args.Dataset):
         end_frame = sessions_list[val_inc+1]
         #print('start:,end:', (start_frame,end_frame))
 
-        val_loader = ImageDataLoader_Val_Test(val_path, None,'validation_split',start_frame, end_frame, shuffle=False, gt_downsample=True, pre_load=True, Dataset="ucsd")
+        val_loader = ImageDataLoader_Val_Test(val_path, None,'validation_split',start_frame, end_frame, shuffle=False, gt_downsample=True, pre_load=True, Dataset=args.Dataset)
         log_file = open(args.SAVE_ROOT+"/"+args.Dataset+"_validation.log","w",1)
         log_print("Validation/Self Training ....", color='green', attrs=['bold'])
         # training
@@ -182,7 +182,7 @@ def val(net,val_path,optimizer, num_epochs, Dataset=args.Dataset):
         torch.backends.cudnn.benchmark = False 
 
         session= str(sessions_list[val_inc])
-        network.save_net(args.SAVE_ROOT+'/'+args.Dataset+ session +'_Self_trained_model.h5', net) 
+        network.save_net(args.SAVE_ROOT+'/'+args.Dataset+ session +'_Self_trained_model_val.h5', net) 
         output_dir = './densitymaps/' + session 
         net.cuda()
         net.eval()
@@ -227,7 +227,7 @@ def test(net,test_path,optimizer, num_epochs, Dataset=args.Dataset):
         end_frame = sessions_list[test_inc+1]
         #print('start:,end:', (start_frame,end_frame))
 
-        test_loader = ImageDataLoader_Val_Test(test_path, None,'test_split',start_frame, end_frame, shuffle=False, gt_downsample=True, pre_load=True, Dataset="ucsd")
+        test_loader = ImageDataLoader_Val_Test(test_path, None,'test_split',start_frame, end_frame, shuffle=False, gt_downsample=True, pre_load=True, Dataset=args.Dataset)
         log_file = open(args.SAVE_ROOT+"/"+args.Dataset+"_test.log","w",1)
         log_print("test/Self Training ....", color='green', attrs=['bold'])
         # training
@@ -273,7 +273,7 @@ def test(net,test_path,optimizer, num_epochs, Dataset=args.Dataset):
         torch.backends.cudnn.benchmark = False 
 
         session= str(sessions_list[val_inc])
-        network.save_net(args.SAVE_ROOT+'/'+args.Dataset+ session +'_Self_trained_model.h5', net) 
+        network.save_net(args.SAVE_ROOT+'/'+args.Dataset+ session +'_self_trained_model_test.h5', net) 
         output_dir = './densitymaps/' + session 
         net.cuda()
         net.eval()
@@ -326,6 +326,40 @@ def eval_val(net, val_path):
    
     return net
 
+# evaluation for supervised trained model (validation)
+def eval_test(net, test_path):
+    torch.backends.cudnn.enabled = True
+    torch.backends.cudnn.benchmark = False 
+
+    output_dir = './output'
+    model_path = args.Dataset+ '_trained_model.h5'
+    model_name = os.path.basename(model_path).split('.')[0]
+
+    if not os.path.exists(output_dir):
+           os.mkdir(output_dir)
+    output_dir = os.path.join(output_dir, 'dm_' + model_name)
+    if not os.path.exists(output_dir):
+            os.mkdir(output_dir)
+
+
+    trained_model = os.path.join(model_path)
+    network.load_net(trained_model, net)
+    net.cuda()
+    net.eval()
+
+    test_loader = ImageDataLoader(test_path, None, 'test_split', shuffle=False, gt_downsample=True, pre_load=True , Dataset=args.Dataset)
+
+    for blob in test_loader:                        
+        im_data = blob['data']
+        net.training = False
+        density_map = net(im_data)
+        density_map = density_map.data.cpu().numpy()
+        new_dm= density_map.reshape([ density_map.shape[2], density_map.shape[3] ])
+        np.savetxt( output_dir + 'output_' + blob['fname'].split('.')[0] +'.csv', new_dm, delimiter=',', fmt='%.6f')
+   
+    return net
+
+
 
 train_path = args.DATA_ROOT+'/train/input/'
 train_gt_path = args.DATA_ROOT+'/train/gt/'
@@ -352,8 +386,18 @@ if rand_seed is not None:
 net = CrowdCounter()
 network.weights_normal_init(net, dev=0.01)
 
-pretrained_model= 'pretrained.h5'
-network.load_net(pretrained_model, net)
+
+
+
+trained_model= 'pretrained.h5'
+
+if args.MODE == 'val':
+    trained_model= args.SAVE_ROOT+'/'+args.Dataset+'_trained_model.h5'
+if args.MODE == 'test':
+    trained_model= args.SAVE_ROOT+'/'+args.Dataset+'_self_trained_model_val.h5'
+
+    
+network.load_net(trained_model, net)
 
 
 net.cuda()
@@ -376,11 +420,12 @@ if args.MODE == 'all' or args.MODE == 'train':
 
 if args.MODE == 'all' or args.MODE == 'val':
     net = val(net,val_path, optimizer,args.VAL_EPOCHS, Dataset=args.Dataset)
-    #network.save_net(args.SAVE_ROOT+'/'+args.Dataset+'_Self_trained_model.h5', net) 
+    #network.save_net(args.SAVE_ROOT+'/'+args.Dataset+'_self_trained_model.h5', net) 
     
     
 # if args.MODE == 'all' or args.MODE == 'test':
-#     net = test(net, test_path)
+#      net = val(net,val_path, optimizer,args.VAL_EPOCHS, Dataset=args.Dataset)
+    #  network.save_net(args.SAVE_ROOT+'/'+args.Dataset+'_self_trained_model.h5', net)
 
 
 
