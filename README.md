@@ -52,10 +52,11 @@ Arguments
 --VAL_EPOCHS      --> Validation epochs
 --learning_rate   --> Learning rate
 
-\
+
 ```
 ## Baseline Results
 ```
+\
 | Supervised_validation_fold  | Self_trained_validation_fold | Supervised_test_fold | Self_trained_test_fold|
 | ------------- | ------------- |------------- | ------------- |
 | 7.49  | 7.01  |10.84  | 10.61  | 
