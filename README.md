@@ -59,7 +59,7 @@ The table shows average MAE of three sequences:
 
 | Supervised_val_fold  | Self_trained_val_fold | Supervised_test_fold | Self_trained_val+test_fold|
 | ------------- | ------------- |------------- | ------------- |
-| 7.49  | 7.01  |10.84  | 10.61  | 
+| 6.8345  | 13.0331  | 9.3776  | 14.4845  | 
 
 
 Please follow guidelines to submit your predictions for evaluations on the challenge website:\
