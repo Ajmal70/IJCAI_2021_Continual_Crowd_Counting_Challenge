@@ -22,6 +22,7 @@ https://drive.google.com/file/d/1N71uZvw9Z3wqHRucJKmvmOwDWNIfK_1y/view?usp=shari
 
 
 Update: Test fold is available here. \
+https://drive.google.com/file/d/1ixqLIVJF17e6GvqdRDC4Jl9eRH8h_zFf/view?usp=sharing
 
 
 The train and validation + test fold  (without groundtruth) are arranged as follows:\
