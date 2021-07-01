@@ -19,11 +19,16 @@ OR 
 
 Can be downloaded from the link below:\
 https://drive.google.com/file/d/1N71uZvw9Z3wqHRucJKmvmOwDWNIfK_1y/view?usp=sharing
+\
 
-The train and validation (without groundtruth) is arranged as follows:\
-- Every dataset folder (say fdst) consists of two sub folders (train, val).
+Update: Test fold is available here. \
+https://drive.google.com/file/d/1ixqLIVJF17e6GvqdRDC4Jl9eRH8h_zFf/view?usp=sharing
+
+
+The train and validation + test fold  (without groundtruth) are arranged as follows:\
+- Every dataset folder (say fdst) consists of three sub folders (train, val,test).
 - A subfolder (say train) may contain input and gt as subfolder.
-- Validation fold does not have a gt folder.
+- Validation and test folds does not have a gt folder.
                       
                       
 ## Running the baseline
